@@ -7,10 +7,10 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import GradientBoostingRegressor
 
 # Load model and scaler
-with open('GradientBoostingRegressor.pkl', 'wb') as f:
+with open('GradientBoostingRegressor.pkl', 'rb') as f:
     model = pickle.load(f)
 
-with open('scaler.pkl', 'wb') as f:
+with open('scaler.pkl', 'rb') as f:
     scale = pickle.load(f)
 
 # Define the expected feature names explicitly if not present in the model
