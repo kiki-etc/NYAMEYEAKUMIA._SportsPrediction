@@ -3,17 +3,21 @@ import pandas as pd
 import numpy as np
 import pickle
 
-from huggingface_hub import hf_hub_download
-
-model_path = hf_hub_download(repo_id="Yaaba/Training-Model", filename="GradientBoostingRegressor.pkl")
-with open(model_path, 'rb') as f:
+# Load model and scaler
+with open('GradientBoostingRegressor.pkl', 'rb') as f:
     model = pickle.load(f)
 
-scale_path = hf_hub_download(repo_id="Yaaba/Training-Model", filename="scaler.pkl")
-with open(model_path, 'rb') as f:
-    scale = pickle.load(f)
+with open('StandardScaler.pkl', 'rb') as f:
+    scaler = pickle.load(f)
 
-# Main program for Streamlit to use
+# Define the expected feature names explicitly if not present in the model
+try:
+    expected_features = model.feature_names_in_
+except AttributeError:
+    expected_features = ['potential', 'value_eur', 'age', 'cm', 'movement_reactions',
+                         'gk', 'wage_eur', 'mentality_vision', 'mentality_composure',
+                         'power_shot_power']
+
 def main():
     st.title("Predicting Player Ratings")
     html_temp = """
@@ -49,15 +53,13 @@ def main():
         }
 
         # Creating DataFrame in correct order
-        df = pd.DataFrame([data], columns=data.keys())
+        df = pd.DataFrame([data], columns=expected_features)
         
         # Scaling input data
-        scaled_data = scale.transform(df)
+        scaled_data = scaler.transform(df)
         
-        # Ensure the DataFrame has the same columns as the model expects
-        expected_features = model.feature_names_in_
-        scaled_df = pd.DataFrame(scaled_data, columns=df.columns)
-        scaled_df = scaled_df[expected_features]
+        # Creating a scaled DataFrame with expected features
+        scaled_df = pd.DataFrame(scaled_data, columns=expected_features)
 
         prediction = model.predict(scaled_df)
         st.write("The predicted overall for your player is ", prediction[0])
