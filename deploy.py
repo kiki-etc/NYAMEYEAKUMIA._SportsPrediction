@@ -23,7 +23,6 @@ def main():
     """
     st.markdown(html_temp, unsafe_allow_html=True)
 
-    # Input fields...
     age = st.number_input('Age:')
     cm = st.number_input('CM:', 1, 100, 1)
     gk = st.number_input('GK:', 1, 100, 1)
@@ -36,35 +35,31 @@ def main():
     potential = st.number_input('Potential:', 1, 100, 1)
 
     if st.button('Predict'):
-        # Gather input data...
         data = {
-            'potential': [potential],
-            'value_eur': [value_eur],
-            'age': [age],
-            'cm': [cm],
-            'movement_reactions': [movement_reactions],
-            'gk': [gk],
-            'wage_eur': [wage_eur],
-            'mentality_vision': [mentality_vision],
-            'mentality_composure': [mentality_composure],
-            'power_shot_power': [power_shot_power]
+            'potential': potential,
+            'value_eur': value_eur,
+            'age': age,
+            'cm': cm,
+            'movement_reactions': movement_reactions,
+            'gk': gk,
+            'wage_eur': wage_eur,
+            'mentality_vision': mentality_vision,
+            'mentality_composure': mentality_composure,
+            'power_shot_power': power_shot_power
         }
 
-        # Scale input data
-        scaled_data = scale.transform(np.array(list(data.values())).reshape(1, -1))
-
-        # Making into a DataFrame
-        df = pd.DataFrame(scaled_data, columns=data.keys())
+        # Creating DataFrame in correct order
+        df = pd.DataFrame([data], columns=data.keys())
+        
+        # Scaling input data
+        scaled_data = scale.transform(df)
         
         # Ensure the DataFrame has the same columns as the model expects
         expected_features = model.feature_names_in_
-        for feature in expected_features:
-            if feature not in df.columns:
-                df[feature] = 0  # or some default value
+        scaled_df = pd.DataFrame(scaled_data, columns=df.columns)
+        scaled_df = scaled_df[expected_features]
 
-        df = df[expected_features]  # Reorder columns to match model's expectation
-        
-        prediction = model.predict(df)
+        prediction = model.predict(scaled_df)
         st.write("The predicted overall for your player is ", prediction[0])
 
 if __name__ == '__main__':
