@@ -3,14 +3,15 @@ import pandas as pd
 import numpy as np
 import pickle
 
-# Load model and scaler
-model_path = "GradientBoostingRegressor.pkl"
+from huggingface_hub import hf_hub_download
+
+model_path = hf_hub_download(repo_id="Yaaba/Training-Model", filename="GradientBoostingRegressor.pkl")
 with open(model_path, 'rb') as f:
     model = pickle.load(f)
 
-scaler_path = "scaler.pkl"
-with open(scaler_path, 'rb') as f:
-    scaler = pickle.load(f)
+scale_path = hf_hub_download(repo_id="Yaaba/Training-Model", filename="scaler.pkl")
+with open(model_path, 'rb') as f:
+    scale = pickle.load(f)
 
 # Main program for Streamlit to use
 def main():
@@ -48,8 +49,9 @@ def main():
             'mentality_composure': [mentality_composure],
             'power_shot_power': [power_shot_power]
         }
+
         # Scale input data
-        scaled_data = scaler.transform(np.array(list(data.values())).reshape(1, -1))
+        scaled_data = scale.transform(np.array(list(data.values())).reshape(1, -1))
 
         # Making into a DataFrame
         df = pd.DataFrame(scaled_data, columns=data.keys())
