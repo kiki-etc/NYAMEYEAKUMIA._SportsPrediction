@@ -3,3 +3,4 @@ pandas
 scikit-learn
 huggingface_hub
 GradientBoostingRegressor
+StandardScaler
