@@ -4,11 +4,11 @@ import numpy as np
 import pickle
 
 # Load model and scaler
-with open('GradientBoostingRegressor.pkl', 'rb') as f:
+with open('GradientBoostingRegressor.pkl', 'wb') as f:
     model = pickle.load(f)
 
-with open('StandardScaler.pkl', 'rb') as f:
-    scaler = pickle.load(f)
+with open('scaler.pkl', 'wb') as f:
+    scale = pickle.load(f)
 
 # Define the expected feature names explicitly if not present in the model
 try:
@@ -56,7 +56,7 @@ def main():
         df = pd.DataFrame([data], columns=expected_features)
         
         # Scaling input data
-        scaled_data = scaler.transform(df)
+        scaled_data = scale.transform(df)
         
         # Creating a scaled DataFrame with expected features
         scaled_df = pd.DataFrame(scaled_data, columns=expected_features)
