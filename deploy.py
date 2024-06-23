@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+from sklearn import preprocessing
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import GradientBoostingRegressor
 
 # Load model and scaler
 with open('GradientBoostingRegressor.pkl', 'wb') as f:
